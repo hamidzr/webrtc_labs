@@ -27,8 +27,8 @@
     "webpack": "^2.3.2"
   },
   "scripts": {
-    "build": "webpack",
-    "build-watch": "webpack --watch",
+    "dev": "webpack -d --watch",
+    "prod": "webpack -p",
     "test": "mocha"
   }
 }
