@@ -4,7 +4,7 @@ let Peer = require('simple-peer');
 let kvServer = 'http://localhost:9000';
 let roomName = getParameterByName('r');
 console.log('welcome to room' , roomName);
-let myId,otherId,peer;
+let myId,otherId,peer,myRole,otherRole;
 
 function getParameterByName(name, url) {
     if (!url) {
@@ -19,8 +19,8 @@ function getParameterByName(name, url) {
 }
 
 function setup(isInitiator){
-  let role = isInitiator ? 'a' : 'b';
-  let otherRole = isInitiator ? 'b' : 'a';
+  myRole = isInitiator ? 'a' : 'b';
+  otherRole = isInitiator ? 'b' : 'a';
   getUserMedia({ video: false, audio: true }, function (err, stream) {
     if (err) return console.error(err)
     peer = new Peer({
@@ -33,7 +33,7 @@ function setup(isInitiator){
         url: kvServer + '/kv/v1/keys',
         method: 'POST',
         data: {
-          key: roomName + '-' + role ,
+          key: roomName + '-' + myRole ,
           val: JSON.stringify(data)
         }
       })
@@ -98,3 +98,13 @@ getOtherId.done(data => {
   setup(false);
 })
 
+$('button#reset').on('click', e => {
+  $.ajax({
+    url: kvServer + `/kv/v1/keys/${roomName}-${myRole}`,
+    type: 'DELETE'
+  })
+  $.ajax({
+    url: kvServer + `/kv/v1/keys/${roomName}-${otherRole}`,
+    type: 'DELETE'
+  })
+})
