@@ -4,7 +4,9 @@
   "description": "to test webrtc goodies",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "webpack -d --watch",
+    "prod": "webpack -p",
+    "test": "mocha"
   },
   "author": "",
   "license": "ISC",
@@ -26,9 +28,12 @@
     "url-loader": "^0.5.6",
     "webpack": "^2.3.2"
   },
-  "scripts": {
-    "dev": "webpack -d --watch",
-    "prod": "webpack -p",
-    "test": "mocha"
+  "dependencies": {
+    "express": "^4.15.2",
+    "getusermedia": "^2.0.1",
+    "jquery": "^3.2.1",
+    "path": "^0.12.7",
+    "pug": "^2.0.0-beta11",
+    "simple-peer": "^7.0.0"
   }
 }

@@ -5,7 +5,9 @@
     <title>Talk Easily</title>
   </head>
   <body>
-    <p>If you are the first person, press <a href="https://talk.itguy.ir/#init"><em>start</em></a> and wait for an ID. Then send that id to the other party and..  </p>
+    <p>If you are the first person, press <em>start</em> and wait for an ID. Then send that id to the other party and..  </p>
+    <p><label>I'm the caller.</label><input type="checkbox" id="isInitiator"  onclick="document.querySelector('button').style.display = 'inline'" />
+    <button id="start" style="display: none;">Start</button><p>
     <label>Your ID:</label><br/>
     <textarea id="yourId"></textarea><br/>
     <label>Other ID:</label><br/>
