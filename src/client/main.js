@@ -1,7 +1,7 @@
-let getUserMedia = require('getusermedia');
-let Peer = require('simple-peer');
+const getUserMedia = require('getusermedia');
+const Peer = require('simple-peer');
 
-let kvServer = 'http://localhost:9000';
+let kvServer = 'https://gr.itguy.ir:9443';
 let roomName = getParameterByName('r');
 console.log('welcome to room' , roomName);
 let myId,otherId,peer,myRole,otherRole;
@@ -22,12 +22,12 @@ function setup(isInitiator){
   myRole = isInitiator ? 'a' : 'b';
   otherRole = isInitiator ? 'b' : 'a';
   getUserMedia({ video: false, audio: true }, function (err, stream) {
-    if (err) return console.error(err)
+    if (err) return console.error(err);
     peer = new Peer({
       initiator: isInitiator,
       trickle: false,
       stream: stream
-    })
+    });
     peer.on('signal', function (data) {
       $.ajax({
         url: kvServer + '/kv/v1/keys',
@@ -37,7 +37,7 @@ function setup(isInitiator){
           val: JSON.stringify(data)
         }
       })
-      document.getElementById('yourId').value = JSON.stringify(data)
+      // document.getElementById('yourId').value = JSON.stringify(data)
     })
 
     document.getElementById('connect').addEventListener('click', function () {
@@ -63,16 +63,16 @@ function setup(isInitiator){
     })
 
     document.getElementById('send').addEventListener('click', function () {
-      let yourMessage = document.getElementById('yourMessage').value
-      peer.send(yourMessage)
+      let yourMessage = document.getElementById('yourMessage').value;
+      peer.send(yourMessage);
     })
 
     peer.on('data', function (data) {
-      document.getElementById('messages').textContent += data + '\n'
+      document.getElementById('messages').textContent += data + '\n';
     })
 
     peer.on('stream', function (stream) {
-      let video = document.createElement('video')
+      let video = document.createElement('video');
       document.body.appendChild(video)
 
       video.src = window.URL.createObjectURL(stream)

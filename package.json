@@ -4,6 +4,7 @@
   "description": "to test webrtc goodies",
   "main": "index.js",
   "scripts": {
+    "start":"node index.js",
     "dev": "webpack -d --watch",
     "prod": "webpack -p",
     "test": "mocha"
