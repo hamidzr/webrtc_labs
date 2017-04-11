@@ -2,25 +2,28 @@
 <html>
   <head>
     <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>Talk Easily</title>
   </head>
   <body>
-    <p>If you are the first person, press <em>start</em> and wait for an ID. Then send that id to the other party and..  </p>
-<!--     <p><label>I'm the caller.</label><input type="checkbox" id="isInitiator"  onclick="document.querySelector('button').style.display = 'inline'" />
-    <button id="start" style="display: none;">Start</button><p>
- --> 
-    <button id="reset">reset the room</button><br/>
-    <!-- <label>Your ID:</label><br/> -->
-    <!-- <textarea id="yourId"></textarea><br/> -->
-    <!-- <label>Other ID:</label><br/> -->
-    <!-- <textarea id="otherId"></textarea> -->
-    <button id="connect">connect</button><br/>
+    <div class="container">
+            <h1>Talk <small>Peer to Peer</small></h1>
+            <p>If you are the first person, press <em>start</em> and wait for an ID. Then send that id to the other party and..  </p>
 
-    <label>Enter Message:</label><br/>
-    <textarea id="yourMessage"></textarea>
-    <button id="send">send</button>
-    <pre id="messages"></pre>
+            <button class="btn btn-warning" id="reset">reset the room</button>
+            <!-- <label>Your ID:</label><br/> -->
+            <!-- <textarea id="yourId"></textarea><br/> -->
+            <!-- <label>Other ID:</label><br/> -->
+            <!-- <textarea id="otherId"></textarea> -->
+            <button class="btn btn-success" id="connect">connect</button>
 
+            <label>Enter Message:</label><br/>
+            <textarea id="yourMessage"></textarea>
+            <button class="btn btn-info" id="send">send</button>
+            <pre id="messages"></pre>
+    </div>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
     <script src="js/vendor.js" charset="utf-8"></script>
     <script src="js/main.js" charset="utf-8"></script>
   </body>
