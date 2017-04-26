@@ -1,4 +1,3 @@
-/* Copyright G. Hemingway, @2017 */
 'use strict';
 
 let path            = require('path'),

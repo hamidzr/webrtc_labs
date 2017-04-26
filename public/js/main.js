@@ -1,15 +1,155 @@
 webpackJsonp([0],{
 
 /***/ 19:
-/* unknown exports provided */
-/* all exports used */
-/*!*****************!*\
-  !*** ./main.js ***!
-  \*****************/
 /***/ (function(module, exports, __webpack_require__) {
 
-eval("/* WEBPACK VAR INJECTION */(function($) {const getUserMedia = __webpack_require__(/*! getusermedia */ 7);\nconst Peer = __webpack_require__(/*! simple-peer */ 9);\n\nlet kvServer = 'https://gr.itguy.ir:9443';\nlet roomName = getParameterByName('r');\nconsole.log('welcome to room', roomName);\nlet myId, otherId, peer, myRole, otherRole;\n\nfunction getParameterByName(name, url) {\n  if (!url) {\n    url = window.location.href;\n  }\n  name = name.replace(/[\\[\\]]/g, \"\\\\$&\");\n  var regex = new RegExp(\"[?&]\" + name + \"(=([^&#]*)|&|#|$)\"),\n      results = regex.exec(url);\n  if (!results) return null;\n  if (!results[2]) return '';\n  return decodeURIComponent(results[2].replace(/\\+/g, \" \"));\n}\n\nfunction setup(isInitiator) {\n  myRole = isInitiator ? 'a' : 'b';\n  otherRole = isInitiator ? 'b' : 'a';\n  getUserMedia({ video: false, audio: true }, function (err, stream) {\n    if (err) return console.error(err);\n    peer = new Peer({\n      initiator: isInitiator,\n      trickle: false,\n      stream: stream\n    });\n    peer.on('signal', function (data) {\n      $.ajax({\n        url: kvServer + '/kv/v1/keys',\n        method: 'POST',\n        data: {\n          key: roomName + '-' + myRole,\n          val: JSON.stringify(data)\n        }\n      });\n      // document.getElementById('yourId').value = JSON.stringify(data)\n    });\n\n    document.getElementById('connect').addEventListener('click', function () {\n      console.log('going to connect to role', otherRole);\n      if (otherId) {\n        console.log('signaling role', otherRole);\n        peer.signal(otherId);\n      } else {\n        console.log('we dont have otherId so going to call');\n        $.ajax({ // there is no otherID \n          url: kvServer + `/kv/v1/keys/${roomName}-${otherRole}`,\n          method: 'GET',\n          success: function (data) {\n            console.log('signaling role', otherRole);\n            peer.signal(data);\n          },\n          error: err => {\n            console.log('failed to get roleID ', otherRole);\n          }\n        });\n      }\n    });\n\n    document.getElementById('send').addEventListener('click', function () {\n      let yourMessage = document.getElementById('yourMessage').value;\n      peer.send(yourMessage);\n    });\n\n    peer.on('data', function (data) {\n      document.getElementById('messages').textContent += data + '\\n';\n    });\n\n    peer.on('stream', function (stream) {\n      let video = document.createElement('video');\n      document.body.appendChild(video);\n\n      video.src = window.URL.createObjectURL(stream);\n      video.play();\n    });\n  });\n}\n\nlet getOtherId = $.ajax({\n  url: kvServer + `/kv/v1/keys/${roomName}-a`,\n  method: 'GET'\n});\ngetOtherId.fail(err => {\n  // you are the first one. initiate!\n  console.log('other side is not setup yet');\n  setup(true);\n});\ngetOtherId.done(data => {\n  // someone else is already here. ( or didn't cleanup after leaving )\n  console.log('otherId is ', data);\n  otherId = data;\n  setup(false);\n});\n\n$('button#reset').on('click', e => {\n  $.ajax({\n    url: kvServer + `/kv/v1/keys/${roomName}-${myRole}`,\n    type: 'DELETE'\n  });\n  $.ajax({\n    url: kvServer + `/kv/v1/keys/${roomName}-${otherRole}`,\n    type: 'DELETE'\n  });\n});\n/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(/*! jquery */ 8)))//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiMTkuanMiLCJzb3VyY2VzIjpbIndlYnBhY2s6Ly8vc3JjL2NsaWVudC9tYWluLmpzPzlhMzIiXSwic291cmNlc0NvbnRlbnQiOlsiY29uc3QgZ2V0VXNlck1lZGlhID0gcmVxdWlyZSgnZ2V0dXNlcm1lZGlhJyk7XG5jb25zdCBQZWVyID0gcmVxdWlyZSgnc2ltcGxlLXBlZXInKTtcblxubGV0IGt2U2VydmVyID0gJ2h0dHBzOi8vZ3IuaXRndXkuaXI6OTQ0Myc7XG5sZXQgcm9vbU5hbWUgPSBnZXRQYXJhbWV0ZXJCeU5hbWUoJ3InKTtcbmNvbnNvbGUubG9nKCd3ZWxjb21lIHRvIHJvb20nICwgcm9vbU5hbWUpO1xubGV0IG15SWQsb3RoZXJJZCxwZWVyLG15Um9sZSxvdGhlclJvbGU7XG5cbmZ1bmN0aW9uIGdldFBhcmFtZXRlckJ5TmFtZShuYW1lLCB1cmwpIHtcbiAgICBpZiAoIXVybCkge1xuICAgICAgdXJsID0gd2luZG93LmxvY2F0aW9uLmhyZWY7XG4gICAgfVxuICAgIG5hbWUgPSBuYW1lLnJlcGxhY2UoL1tcXFtcXF1dL2csIFwiXFxcXCQmXCIpO1xuICAgIHZhciByZWdleCA9IG5ldyBSZWdFeHAoXCJbPyZdXCIgKyBuYW1lICsgXCIoPShbXiYjXSopfCZ8I3wkKVwiKSxcbiAgICAgICAgcmVzdWx0cyA9IHJlZ2V4LmV4ZWModXJsKTtcbiAgICBpZiAoIXJlc3VsdHMpIHJldHVybiBudWxsO1xuICAgIGlmICghcmVzdWx0c1syXSkgcmV0dXJuICcnO1xuICAgIHJldHVybiBkZWNvZGVVUklDb21wb25lbnQocmVzdWx0c1syXS5yZXBsYWNlKC9cXCsvZywgXCIgXCIpKTtcbn1cblxuZnVuY3Rpb24gc2V0dXAoaXNJbml0aWF0b3Ipe1xuICBteVJvbGUgPSBpc0luaXRpYXRvciA/ICdhJyA6ICdiJztcbiAgb3RoZXJSb2xlID0gaXNJbml0aWF0b3IgPyAnYicgOiAnYSc7XG4gIGdldFVzZXJNZWRpYSh7IHZpZGVvOiBmYWxzZSwgYXVkaW86IHRydWUgfSwgZnVuY3Rpb24gKGVyciwgc3RyZWFtKSB7XG4gICAgaWYgKGVycikgcmV0dXJuIGNvbnNvbGUuZXJyb3IoZXJyKTtcbiAgICBwZWVyID0gbmV3IFBlZXIoe1xuICAgICAgaW5pdGlhdG9yOiBpc0luaXRpYXRvcixcbiAgICAgIHRyaWNrbGU6IGZhbHNlLFxuICAgICAgc3RyZWFtOiBzdHJlYW1cbiAgICB9KTtcbiAgICBwZWVyLm9uKCdzaWduYWwnLCBmdW5jdGlvbiAoZGF0YSkge1xuICAgICAgJC5hamF4KHtcbiAgICAgICAgdXJsOiBrdlNlcnZlciArICcva3YvdjEva2V5cycsXG4gICAgICAgIG1ldGhvZDogJ1BPU1QnLFxuICAgICAgICBkYXRhOiB7XG4gICAgICAgICAga2V5OiByb29tTmFtZSArICctJyArIG15Um9sZSAsXG4gICAgICAgICAgdmFsOiBKU09OLnN0cmluZ2lmeShkYXRhKVxuICAgICAgICB9XG4gICAgICB9KVxuICAgICAgLy8gZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ3lvdXJJZCcpLnZhbHVlID0gSlNPTi5zdHJpbmdpZnkoZGF0YSlcbiAgICB9KVxuXG4gICAgZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ2Nvbm5lY3QnKS5hZGRFdmVudExpc3RlbmVyKCdjbGljaycsIGZ1bmN0aW9uICgpIHtcbiAgICAgICAgY29uc29sZS5sb2coJ2dvaW5nIHRvIGNvbm5lY3QgdG8gcm9sZScsb3RoZXJSb2xlKTtcbiAgICAgIGlmKG90aGVySWQpeyBcbiAgICAgICAgY29uc29sZS5sb2coJ3NpZ25hbGluZyByb2xlJyxvdGhlclJvbGUpO1xuICAgICAgICBwZWVyLnNpZ25hbChvdGhlcklkKTtcbiAgICAgIH1lbHNle1xuICAgICAgICBjb25zb2xlLmxvZygnd2UgZG9udCBoYXZlIG90aGVySWQgc28gZ29pbmcgdG8gY2FsbCcpO1xuICAgICAgICAkLmFqYXgoeyAvLyB0aGVyZSBpcyBubyBvdGhlcklEIFxuICAgICAgICAgIHVybDoga3ZTZXJ2ZXIgKyBgL2t2L3YxL2tleXMvJHtyb29tTmFtZX0tJHtvdGhlclJvbGV9YCxcbiAgICAgICAgICBtZXRob2Q6ICdHRVQnLFxuICAgICAgICAgIHN1Y2Nlc3M6IGZ1bmN0aW9uKGRhdGEpe1xuICAgICAgICAgICAgY29uc29sZS5sb2coJ3NpZ25hbGluZyByb2xlJyxvdGhlclJvbGUpO1xuICAgICAgICAgICAgcGVlci5zaWduYWwoZGF0YSk7XG4gICAgICAgICAgfSxcbiAgICAgICAgICBlcnJvcjogZXJyID0+e1xuICAgICAgICAgICAgY29uc29sZS5sb2coJ2ZhaWxlZCB0byBnZXQgcm9sZUlEICcsb3RoZXJSb2xlKTtcbiAgICAgICAgICB9XG4gICAgICAgIH0pXG4gICAgICB9XG4gICAgICBcbiAgICB9KVxuXG4gICAgZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ3NlbmQnKS5hZGRFdmVudExpc3RlbmVyKCdjbGljaycsIGZ1bmN0aW9uICgpIHtcbiAgICAgIGxldCB5b3VyTWVzc2FnZSA9IGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCd5b3VyTWVzc2FnZScpLnZhbHVlO1xuICAgICAgcGVlci5zZW5kKHlvdXJNZXNzYWdlKTtcbiAgICB9KVxuXG4gICAgcGVlci5vbignZGF0YScsIGZ1bmN0aW9uIChkYXRhKSB7XG4gICAgICBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnbWVzc2FnZXMnKS50ZXh0Q29udGVudCArPSBkYXRhICsgJ1xcbic7XG4gICAgfSlcblxuICAgIHBlZXIub24oJ3N0cmVhbScsIGZ1bmN0aW9uIChzdHJlYW0pIHtcbiAgICAgIGxldCB2aWRlbyA9IGRvY3VtZW50LmNyZWF0ZUVsZW1lbnQoJ3ZpZGVvJyk7XG4gICAgICBkb2N1bWVudC5ib2R5LmFwcGVuZENoaWxkKHZpZGVvKVxuXG4gICAgICB2aWRlby5zcmMgPSB3aW5kb3cuVVJMLmNyZWF0ZU9iamVjdFVSTChzdHJlYW0pXG4gICAgICB2aWRlby5wbGF5KClcbiAgICB9KVxuICB9KVxufVxuXG5cbmxldCBnZXRPdGhlcklkID0gJC5hamF4KHtcbiAgdXJsOiBrdlNlcnZlciArIGAva3YvdjEva2V5cy8ke3Jvb21OYW1lfS1hYCxcbiAgbWV0aG9kOiAnR0VUJ1xufSlcbmdldE90aGVySWQuZmFpbChlcnIgPT4ge1xuICAvLyB5b3UgYXJlIHRoZSBmaXJzdCBvbmUuIGluaXRpYXRlIVxuICBjb25zb2xlLmxvZygnb3RoZXIgc2lkZSBpcyBub3Qgc2V0dXAgeWV0Jyk7XG4gIHNldHVwKHRydWUpO1xufSk7XG5nZXRPdGhlcklkLmRvbmUoZGF0YSA9PiB7XG4gIC8vIHNvbWVvbmUgZWxzZSBpcyBhbHJlYWR5IGhlcmUuICggb3IgZGlkbid0IGNsZWFudXAgYWZ0ZXIgbGVhdmluZyApXG4gIGNvbnNvbGUubG9nKCdvdGhlcklkIGlzICcsZGF0YSk7XG4gIG90aGVySWQgPSBkYXRhO1xuICBzZXR1cChmYWxzZSk7XG59KVxuXG4kKCdidXR0b24jcmVzZXQnKS5vbignY2xpY2snLCBlID0+IHtcbiAgJC5hamF4KHtcbiAgICB1cmw6IGt2U2VydmVyICsgYC9rdi92MS9rZXlzLyR7cm9vbU5hbWV9LSR7bXlSb2xlfWAsXG4gICAgdHlwZTogJ0RFTEVURSdcbiAgfSlcbiAgJC5hamF4KHtcbiAgICB1cmw6IGt2U2VydmVyICsgYC9rdi92MS9rZXlzLyR7cm9vbU5hbWV9LSR7b3RoZXJSb2xlfWAsXG4gICAgdHlwZTogJ0RFTEVURSdcbiAgfSlcbn0pXG5cblxuLy8gV0VCUEFDSyBGT09URVIgLy9cbi8vIHNyYy9jbGllbnQvbWFpbi5qcyJdLCJtYXBwaW5ncyI6IkFBQUE7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUFBO0FBRUE7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUhBO0FBS0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFGQTtBQUhBO0FBUUE7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQVRBO0FBV0E7QUFFQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFFQTtBQUNBO0FBQ0E7QUFGQTtBQUlBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBRkE7QUFJQTtBQUNBO0FBQ0E7QUFGQTtBQUlBO0EiLCJzb3VyY2VSb290IjoiIn0=");
+const getUserMedia = __webpack_require__(7);
+const Peer = __webpack_require__(8);
+
+let SERVER_ADDRESS = 'https://gr.itguy.ir:9443';
+let roomName = getParameterByName('r');
+console.log('welcome to room', roomName);
+let peer;
+
+console.log(io);
+var socket = io(SERVER_ADDRESS);
+socket.on('connect', function () {
+  console.log('Connected to socket');
+});
+
+function getParameterByName(name, url) {
+  if (!url) {
+    url = window.location.href;
+  }
+  name = name.replace(/[\[\]]/g, "\\$&");
+  var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+      results = regex.exec(url);
+  if (!results) return null;
+  if (!results[2]) return '';
+  return decodeURIComponent(results[2].replace(/\+/g, " "));
+}
+
+function watchForData(peer) {
+  document.getElementById('send').addEventListener('click', function () {
+    let yourMessage = document.getElementById('yourMessage').value;
+    peer.send(yourMessage);
+  });
+
+  peer.on('data', function (data) {
+    document.getElementById('messages').textContent += data + '\n';
+  });
+
+  peer.on('stream', function (stream) {
+    let video = document.createElement('video');
+    document.body.appendChild(video);
+
+    video.src = window.URL.createObjectURL(stream);
+    video.play();
+  });
+};
+
+getUserMedia({ video: false, audio: true }, function (err, stream) {
+  if (err) return console.error(err);
+
+  socket.emit('sig:ready', roomName);
+  console.log('sent ready');
+
+  socket.on('sig:init', function () {
+    console.log('got init');
+    peer = new Peer({
+      initiator: true,
+      trickle: false,
+      stream: stream
+    });
+    peer.on('signal', function (data) {
+      socket.emit('sig:offer', JSON.stringify(data));
+      console.log('sent offer', data);
+    });
+  });
+
+  socket.on('sig:accept', function (accept) {
+    accept = JSON.parse(accept);
+    peer.signal(accept);
+    console.log('got accept', accept);
+    watchForData(peer);
+  });
+
+  socket.on('sig:offer', function (offer) {
+    offer = JSON.parse(offer);
+    console.log('got offer', offer);
+    peer = new Peer({
+      initiator: false,
+      trickle: false,
+      stream: stream
+    });
+    peer.on('signal', function (data) {
+      socket.emit('sig:accept', JSON.stringify(data));
+      console.log('sent accept', data);
+    });
+    peer.signal(offer);
+    watchForData(peer);
+  });
+
+  // document.getElementById('connect').addEventListener('click', function () {
+  //     console.log('going to connect to role',otherRole);
+  //   if(otherId){ 
+  //     console.log('signaling role',otherRole);
+  //     peer.signal(otherId);
+  //   }else{
+  //     console.log('we dont have otherId so going to call');
+  //     $.ajax({ // there is no otherID 
+  //       url: SERVER_ADDRESS + `/kv/v1/keys/${roomName}-${otherRole}`,
+  //       method: 'GET',
+  //       success: function(data){
+  //         console.log('signaling role',otherRole);
+  //         peer.signal(data);
+  //       },
+  //       error: err =>{
+  //         console.log('failed to get roleID ',otherRole);
+  //       }
+  //     })
+  //   }
+
+  // })
+
+}); // end of getUserMedia
+
+
+// function setup(isInitiator){
+//   myRole = isInitiator ? 'a' : 'b';
+//   otherRole = isInitiator ? 'b' : 'a';
+
+// }
+
+
+// let getOtherId = $.ajax({
+//   url: SERVER_ADDRESS + `/kv/v1/keys/${roomName}-a`,
+//   method: 'GET'
+// })
+// getOtherId.fail(err => {
+//   // you are the first one. initiate!
+//   console.log('other side is not setup yet');
+//   setup(true);
+// });
+// getOtherId.done(data => {
+//   // someone else is already here. ( or didn't cleanup after leaving )
+//   console.log('otherId is ',data);
+//   otherId = data;
+//   setup(false);
+// })
+
+// $('button#reset').on('click', e => {
+//   $.ajax({
+//     url: SERVER_ADDRESS + `/kv/v1/keys/${roomName}-${myRole}`,
+//     type: 'DELETE'
+//   })
+//   $.ajax({
+//     url: SERVER_ADDRESS + `/kv/v1/keys/${roomName}-${otherRole}`,
+//     type: 'DELETE'
+//   })
+// })
 
 /***/ })
 
 },[19]);
+//# sourceMappingURL=main.map
