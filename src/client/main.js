@@ -1,7 +1,8 @@
 const getUserMedia = require('getusermedia');
 const Peer = require('simple-peer');
 
-let SERVER_ADDRESS = 'https://gr.itguy.ir:9443';
+// let SERVER_ADDRESS = 'https://gr.itguy.ir:9443';
+let SERVER_ADDRESS = 'http://localhost:9080';
 let roomName = getParameterByName('r');
 var peer, socket;
 
@@ -19,7 +20,7 @@ function getParameterByName(name, url) {
         results = regex.exec(url);
     if (!results) return null;
     if (!results[2]) return null;
-    return convertToSlug(decodeURIComponent(results[2].replace(/\+/g, " ")));
+    return convertToSlug(decodeURIComponent(results[2].toLowerCase().replace(/\+/g, " ")));
 }
 
 // converts string to one word
@@ -38,29 +39,35 @@ if (roomName != null) {
 }
 
 
+
+// setup the communication when form is submitted
 document.getElementById('setup').addEventListener('submit', e => {
   e.preventDefault();
-  roomName = document.getElementById('room').value;
+  roomName = document.getElementById('room').value.toLowerCase();
   if (roomName.length > 1) {
     let options = {
       audio: document.getElementById('audio').checked,
       video: document.getElementById('video').checked
     };
-    console.log(options);
     start(options);
     document.querySelector('h2').textContent = 'Welcome to room: ' + roomName;
   }else{
-    alert('Enter a room name');
+    alert('Enter a room name!');
   };
 });
 
+document.getElementById('reset').addEventListener('click', e => {
+  console.log('resetting the room');
+  socket.emit('sig:reset');
+  peer.destroy();
+});
 
 
 // function cleanRoom(socket){
 //   socket.emit('sig:clean')
 // }
 
-function watchForData(){
+function watchForPeer(){
   document.getElementById('send').disabled = false;
   document.getElementById('chat').addEventListener('submit', function (e) {
     e.preventDefault();    
@@ -80,6 +87,12 @@ function watchForData(){
 
     player.src = window.URL.createObjectURL(stream)
     player.play()
+  })
+
+  peer.on('close', ()=>{
+    console.log('Peer died');
+    // let the user know that peer died and take action
+    alert('Peer is gone.');
   })
 };
 
@@ -118,7 +131,7 @@ function start(options){
       accept = JSON.parse(accept);
       peer.signal(accept);
       console.log('got accept',accept);
-      watchForData();
+      watchForPeer();
     });
 
 
@@ -135,7 +148,7 @@ function start(options){
         console.log('sent accept', data);     
       })
       peer.signal(offer);
-      watchForData();
+      watchForPeer();
     });
 
 
