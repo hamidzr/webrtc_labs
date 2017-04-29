@@ -1,31 +1,67 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>Talk Easily</title>
-  </head>
-  <body>
-    <div class="container">
-            <h1>Talk <small>Peer to Peer</small></h1>
-            <p>If you are the first person, press <em>start</em> and wait for an ID. Then send that id to the other party and..  </p>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+	<title>Talk Easily</title>
+</head>
+<body>
+	<div id="root">
+		<div class="container">
+			<div class="page-header">
+				<h1>Communicate P2P <small>powered by WebRTC</small></h1>
+			</div>
+			<h2></h2>
+			<p>WebRTC (Web Real-Time Communication) is a collection of communications protocols and application programming interfaces that enable real-time communication over peer-to-peer connections. ... WebRTC is being standardized by the World Wide Web Consortium (W3C) and the Internet Engineering Task Force (IETF).</p>
+			<form class="form-inline" id="setup">
+				<div class="form-group">
+					<label for="room">Room: </label>
+					<input type="text" class="form-control" id="room" placeholder="room name">
+				</div>
+				<div class="checkbox">
+					<label>
+						<input type="checkbox" id="audio" checked> Audio
+					</label>
+				</div>
+				<div class="checkbox">
+					<label>
+						<input type="checkbox" id="video"> Video
+					</label>
+				</div>
+				<button type="submit" id="connect" class="btn btn-success">Connect</button>
+			</form> 
+			<hr>
+			<div class="row">
+				<div class="col-md-8">
+					<video src="" id="player"></video>
+				</div>
+				<div class="col-md-4">
+					<form class="form-inline" id="chat">
+						<div class="form-group">
+							<!-- <label for="yourMessage">Message: </label> -->
+							<input type="text" class="form-control" id="yourMessage" placeholder="Type a message">
+						</div>
+						<button type="submit" id="send" class="btn btn-info" disabled>Send</button>
+					</form> 
+					<br>
+					<pre id="messages"></pre>  
+				</div>
+			</div>   
+			<footer class="text-center">
+				<p class="text-muted">Class project for distributed systems course @ Vanderbilt University, Professor A Gokhale. Team 8</p>
+			</footer>
+		</div>
+		<button class="btn btn-warning" id="reset">reset the room</button>
+		<!-- <label>Your ID:</label><br/> -->
+		<!-- <textarea id="yourId"></textarea><br/> -->
+		<!-- <label>Other ID:</label><br/> -->
+		<!-- <textarea id="otherId"></textarea> -->
 
-            <button class="btn btn-warning" id="reset">reset the room</button>
-            <!-- <label>Your ID:</label><br/> -->
-            <!-- <textarea id="yourId"></textarea><br/> -->
-            <!-- <label>Other ID:</label><br/> -->
-            <!-- <textarea id="otherId"></textarea> -->
-            <button class="btn btn-success" id="connect">connect</button>
-
-            <label>Enter Message:</label><br/>
-            <textarea id="yourMessage"></textarea>
-            <button class="btn btn-info" id="send">send</button>
-            <pre id="messages"></pre>
-    </div>
-
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.7.3/socket.io.min.js"></script>
-    <script src="js/vendor.js" charset="utf-8"></script>
-    <script src="js/main.js" charset="utf-8"></script>
-  </body>
+		          
+	</div>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.7.3/socket.io.min.js"></script>
+	<script src="js/vendor.js" charset="utf-8"></script>
+	<script src="js/main.js" charset="utf-8"></script>
+</body>
 </html>

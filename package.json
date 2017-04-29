@@ -5,8 +5,9 @@
   "main": "index.js",
   "scripts": {
     "start":"node index.js",
-    "dev": "webpack -d --watch",
-    "prod": "webpack -p",
+    "dev": "nodemon index.js",
+    "build-watch": "webpack -d --watch",
+    "build-prod": "webpack -p",
     "test": "mocha"
   },
   "author": "",
