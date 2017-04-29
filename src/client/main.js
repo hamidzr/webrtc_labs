@@ -1,8 +1,8 @@
 const getUserMedia = require('getusermedia');
 const Peer = require('simple-peer');
 
-// let SERVER_ADDRESS = 'https://gr.itguy.ir:9443';
-let SERVER_ADDRESS = 'http://localhost:9080';
+let SERVER_ADDRESS = 'https://gr.itguy.ir:9443';
+// let SERVER_ADDRESS = 'http://localhost:9080';
 let roomName = getParameterByName('r');
 var peer, socket;
 
@@ -56,10 +56,13 @@ document.getElementById('setup').addEventListener('submit', e => {
   };
 });
 
+
+// resetting the room
 document.getElementById('reset').addEventListener('click', e => {
   console.log('resetting the room');
   socket.emit('sig:reset');
   peer.destroy();
+  location.href = "/";
 });
 
 
@@ -115,6 +118,7 @@ function start(options){
 
     socket.on('sig:init',function(){
       console.log('got init');
+      if (peer != null ) peer.destroy();
       peer = new Peer({
         initiator: true,
         trickle: false,
