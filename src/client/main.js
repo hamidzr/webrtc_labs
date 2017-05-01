@@ -93,9 +93,17 @@ function watchForPeer(){
   })
 
   peer.on('close', ()=>{
-    console.log('Peer died');
-    // let the user know that peer died and take action
-    alert('Peer is gone.');
+    console.log('Peer died'); // or reseted the room and left
+    peer.destroy();
+    // we are still here so prepare the room!
+    console.log('Preparing the room for reconnection');
+    // notify the server of the situation ( just in case )
+    socket.emit('sig:reset'); // you are notified of disconnects faster than sig server
+    socket.emit('sig:ready',roomName);
+    console.log('sending ready signal');
+
+    // TODO let the user know that peer died
+
   })
 };
 
@@ -106,56 +114,57 @@ function start(options){
   socket = io(SERVER_ADDRESS);
   socket.on('connect', function(){
     console.log('Connected to socket');
+    console.log('welcome to room' , roomName);
+
+    getUserMedia(options, function (err, stream) {
+      if (err) return console.error(err);
+
+      socket.emit('sig:ready',roomName);
+      console.log('sent ready');
+
+      socket.on('sig:init',function(){
+        console.log('got init');
+        if (peer != null ) peer.destroy();
+        peer = new Peer({
+          initiator: true,
+          trickle: false,
+          stream: stream
+        });
+        peer.on('signal', function (data) {
+          socket.emit('sig:offer', JSON.stringify(data));
+          console.log('sent offer', data);     
+        })
+      });
+
+
+      socket.on('sig:accept', function(accept){
+        accept = JSON.parse(accept);
+        peer.signal(accept);
+        console.log('got accept',accept);
+        watchForPeer();
+      });
+
+
+      socket.on('sig:offer', function(offer){
+        offer = JSON.parse(offer);
+        console.log('got offer',offer);
+        peer = new Peer({
+          initiator: false,
+          trickle: false,
+          stream: stream
+        });
+        peer.on('signal', function (data) {
+          socket.emit('sig:accept', JSON.stringify(data));
+          console.log('sent accept', data);     
+        })
+        peer.signal(offer);
+        watchForPeer();
+      });
+
+
+    }); // end of getUserMedia
+
   });
 
-  console.log('welcome to room' , roomName);
-
-  getUserMedia(options, function (err, stream) {
-    if (err) return console.error(err);
-
-    socket.emit('sig:ready',roomName);
-    console.log('sent ready');
-
-    socket.on('sig:init',function(){
-      console.log('got init');
-      if (peer != null ) peer.destroy();
-      peer = new Peer({
-        initiator: true,
-        trickle: false,
-        stream: stream
-      });
-      peer.on('signal', function (data) {
-        socket.emit('sig:offer', JSON.stringify(data));
-        console.log('sent offer', data);     
-      })
-    });
-
-
-    socket.on('sig:accept', function(accept){
-      accept = JSON.parse(accept);
-      peer.signal(accept);
-      console.log('got accept',accept);
-      watchForPeer();
-    });
-
-
-    socket.on('sig:offer', function(offer){
-      offer = JSON.parse(offer);
-      console.log('got offer',offer);
-      peer = new Peer({
-        initiator: false,
-        trickle: false,
-        stream: stream
-      });
-      peer.on('signal', function (data) {
-        socket.emit('sig:accept', JSON.stringify(data));
-        console.log('sent accept', data);     
-      })
-      peer.signal(offer);
-      watchForPeer();
-    });
-
-
-  }); // end of getUserMedia
 
 }
