@@ -4,7 +4,7 @@
   "description": "to test webrtc goodies",
   "main": "index.js",
   "scripts": {
-    "start":"node index.js",
+    "start": "node index.js",
     "dev": "nodemon index.js",
     "build-watch": "webpack -d --watch",
     "build-prod": "webpack -p",
@@ -34,6 +34,7 @@
     "express": "^4.15.2",
     "getusermedia": "^2.0.1",
     "jquery": "^3.2.1",
+    "morgan": "^1.8.1",
     "path": "^0.12.7",
     "pug": "^2.0.0-beta11",
     "simple-peer": "^7.0.0"

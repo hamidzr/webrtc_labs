@@ -1,11 +1,17 @@
 'use strict';
 
 let path            = require('path'),
-    express         = require('express');
+    express         = require('express'),
+    https 			= require('https'),
+    http 			= require('http'),
+			logger				= require('morgan'),
 
-let port = process.env.PORT ? process.env.PORT : 8080;
-let env = process.env.NODE_ENV ? process.env.NODE_ENV : 'dev';
+    fs 				= require('fs');
 
+const PORT = process.env.PORT ? process.env.PORT : 8080;
+const env = process.env.NODE_ENV ? process.env.NODE_ENV : 'dev';
+const CERT_DIR = process.env.CERT_DIR || __dirname;
+const SECURE_PORT = 8443;
 /**********************************************************************************************************/
 
 // Setup our Express pipeline
@@ -14,48 +20,41 @@ let app = express();
 app.use(express.static(path.join(__dirname, 'public')));
 // Setup pipeline support for server-side templates
 app.engine('pug', require('pug').__express);
+app.use(logger('dev'));
+// redirect to https if available
+if (SECURE_PORT) {
+	app.use (function (req, res, next) {
+		if (req.secure) {
+			next();
+		} else {
+			res.redirect('https://' + req.hostname +':'+SECURE_PORT+ req.url);
+		}
+	});
+}
 app.set('views', __dirname);
-// Setup pipeline session support
-// app.use(session({
-//     name: 'session',
-//     secret: 'ohhellyes',
-//     resave: false,
-//     saveUninitialized: true,
-//     cookie: {
-//         path: '/',
-//         httpOnly: false,
-//         secure: false
-//     }
-// }));
-
-// Connect to mongoBD
-// let options = { promiseLibrary: require('bluebird') };
-// mongoose.connect('mongodb://localhost:32768/heminggs', options, err => {
-//     if (err) console.log(err);
-//     else console.log('\t MongoDB connected');
-// });
-
-// Import our Data Models
-// app.models = {
-//     Game: require('./models/game'),
-//     User: require('./models/user')
-// };
-
-// Import our API Routes
-// require('./api/kv/v1/key_value')(app);
 
 
 /**********************************************************************************************************/
 
 // Give them the base page
 app.get('*', (req, res) => {
-    // res.render('base.pug', {});
-    res.status(404).send('resource not found');
+    res.send(__dirname + '/public/index.html');
 });
 
 /**********************************************************************************************************/
 
-// Run the server itself
-let server = app.listen(port, () => {
-    console.log('Example app listening on ' + server.address().port);
+
+let httpServer = http.Server(app).listen(PORT, () => {
+	console.log('listening on unsecure port: ' + PORT);
 });
+
+if (SECURE_PORT) {
+	const SSL_OPTIONS = {
+		key: fs.readFileSync(CERT_DIR + '/key.pem'),
+		cert: fs.readFileSync(CERT_DIR + '/cert.pem')
+	};
+	let httpsServer = https.createServer(SSL_OPTIONS, app);
+	httpsServer.listen(SECURE_PORT);
+	console.log('listening on secure port: ',SECURE_PORT);
+
+}

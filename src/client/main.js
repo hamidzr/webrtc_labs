@@ -2,8 +2,7 @@ const getUserMedia = require('getusermedia');
 const Peer = require('simple-peer');
 
 let SERVER_ADDRESS = 'https://gr.itguy.ir:9443';
-// let SERVER_ADDRESS = 'http://localhost:9080';
-let roomName = getParameterByName('r');
+// let SERVER_ADDRESS = 'https://local.itguy.ir:9443';
 var peer, socket;
 
 
@@ -22,6 +21,7 @@ function getParameterByName(name, url) {
     if (!results[2]) return null;
     return convertToSlug(decodeURIComponent(results[2].toLowerCase().replace(/\+/g, " ")));
 }
+var roomName = getParameterByName('r');
 
 // converts string to one word
 function convertToSlug(Text)
